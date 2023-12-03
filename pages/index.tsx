@@ -178,8 +178,14 @@ export default function SnakeGame() {
     }
   }
 
+  const [questionAsked, setQuestionAsked] = useState(false)
+
   // Update snake.head, snake.trail and apple positions. Check for collisions.
   const updateSnake = () => {
+    if (!running || showQuestion) {
+      return
+    }
+
     // Check for collision with walls
     const nextHeadPosition = {
       x: snake.head.x + velocity.dx,
@@ -192,6 +198,7 @@ export default function SnakeGame() {
       nextHeadPosition.y >= canvasHeight / canvasGridSize
     ) {
       gameOver()
+      return // Exit the function immediately
     }
 
     // Check for collision with apple
@@ -203,15 +210,17 @@ export default function SnakeGame() {
     const updatedSnakeTrail = [...snake.trail, { ...snake.head }]
     // Remove trail history beyond snake trail length (score + 2)
     while (updatedSnakeTrail.length > score + 2) updatedSnakeTrail.shift()
-    // Check for snake colliding with itsself
+    // Check for snake colliding with itself
     if (
       updatedSnakeTrail.some(
         (snakePart) =>
           snakePart.x === nextHeadPosition.x &&
           snakePart.y === nextHeadPosition.y
       )
-    )
+    ) {
       gameOver()
+      return // Exit the function immediately
+    }
 
     // Update state
     setPreviousVelocity({ ...velocity })
@@ -219,6 +228,15 @@ export default function SnakeGame() {
       head: { ...nextHeadPosition },
       trail: [...updatedSnakeTrail],
     })
+
+    // Check if the player's score is a multiple of 5 to show the question
+    if (score % 3 === 0 && score !== 0 && !questionAsked) {
+      generateQuestion()
+      setRunning(false) // Pause the game
+      setQuestionAsked(true)
+    } else if (score % 3 !== 0 && questionAsked) {
+      setQuestionAsked(false)
+    }
   }
 
   // Game Hook
@@ -329,10 +347,57 @@ export default function SnakeGame() {
     }
   }, [previousVelocity])
 
+  const [showQuestion, setShowQuestion] = useState(false)
+  const [question, setQuestion] = useState('')
+  const [answer, setAnswer] = useState('')
+  const [options, setOptions] = useState<string[]>([])
+
+  const generateQuestion = () => {
+    const questionsAndAnswers = [
+      {
+        question: 'What is 2 + 2?',
+        options: ['4', '5', '6', '7'],
+        correctAnswer: '4',
+      },
+      // Add more questions, options, and correct answers as needed
+    ]
+
+    const randomIndex = Math.floor(Math.random() * questionsAndAnswers.length)
+    const selectedQuestion = questionsAndAnswers[randomIndex]
+    setQuestion(selectedQuestion.question)
+    setOptions(selectedQuestion.options)
+    setAnswer(selectedQuestion.correctAnswer) // Set the correct answer
+    setShowQuestion(true)
+  }
+
+  const checkAnswer = (selectedOption: string) => {
+    if (selectedOption === answer) {
+      // Check if the selected option is the correct answer
+      // Correct answer
+      setShowQuestion(false)
+      setRunning(true) // Resume the game
+    } else {
+      // Incorrect answer, end the game
+      gameOver()
+    }
+  }
   return (
     <>
       <Head />
       <main>
+        {showQuestion && (
+          <div className="question-container">
+            <p className="question">{question}</p>
+            <div className="options">
+              {options.map((option) => (
+                <button key={option} onClick={() => checkAnswer(option)}>
+                  {option}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         <canvas
           ref={canvasRef}
           width={canvasWidth + 1}
