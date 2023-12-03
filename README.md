@@ -20,3 +20,4 @@ This project was a great opportunity to gain a deeper understanding of how React
 If you happen to find any bugs; have ideas on improving core gameplay; or you want to contribute directly, feel free to open an issue or pull request!
 # snake-nextjs-with-questions
 # snake-nextjs-with-questions
+# snake-nextjs-with-questions
