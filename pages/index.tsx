@@ -382,59 +382,47 @@ export default function SnakeGame() {
     }
   }
 
-  const handleInteraction = (clientX: number, clientY: number) => {
+  const handleTouch = (e: TouchEvent) => {
+    e.preventDefault() // Optional: Prevents the default action of the touch event
     const canvas = canvasRef.current
     if (!canvas) return
 
     const rect = canvas.getBoundingClientRect()
-    const x = clientX - rect.left
-    const y = clientY - rect.top
+    const touchX = e.touches[0].clientX - rect.left
+    const touchY = e.touches[0].clientY - rect.top
     const canvasCenterX = canvasWidth / 2
     const canvasCenterY = canvasHeight / 2
 
-    if (Math.abs(x - canvasCenterX) > Math.abs(y - canvasCenterY)) {
-      // Horizontal interaction
-      if (x < canvasCenterX) {
-        // Left interaction
+    if (Math.abs(touchX - canvasCenterX) > Math.abs(touchY - canvasCenterY)) {
+      // Horizontal touch
+      if (touchX < canvasCenterX) {
+        // Left touch
         setVelocity({ dx: -1, dy: 0 })
       } else {
-        // Right interaction
+        // Right touch
         setVelocity({ dx: 1, dy: 0 })
       }
     } else {
-      // Vertical interaction
-      if (y < canvasCenterY) {
-        // Up interaction
+      // Vertical touch
+      if (touchY < canvasCenterY) {
+        // Up touch
         setVelocity({ dx: 0, dy: -1 })
       } else {
-        // Down interaction
+        // Down touch
         setVelocity({ dx: 0, dy: 1 })
       }
     }
-  }
-  const handleTouch = (e: TouchEvent) => {
-    e.preventDefault()
-    const touchX = e.touches[0].clientX
-    const touchY = e.touches[0].clientY
-    handleInteraction(touchX, touchY)
-  }
-
-  const handleClick = (e: MouseEvent) => {
-    e.preventDefault()
-    handleInteraction(e.clientX, e.clientY)
   }
 
   useEffect(() => {
     const canvas = canvasRef.current
     if (canvas) {
-      canvas.addEventListener('touchstart', handleTouch)
-      canvas.addEventListener('mousedown', handleClick)
+      canvas.addEventListener('touchstart', handleTouch, { passive: false })
     }
 
     return () => {
       if (canvas) {
         canvas.removeEventListener('touchstart', handleTouch)
-        canvas.removeEventListener('mousedown', handleClick)
       }
     }
   }, [])
