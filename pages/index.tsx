@@ -439,6 +439,33 @@ export default function SnakeGame() {
     }
   }, [])
 
+  // Dynamic Canvas Settings
+  const [canvasSize, setCanvasSize] = useState({ width: 500, height: 380 })
+
+  // Function to update canvas size
+  const updateCanvasSize = () => {
+    const maxWidth = window.innerWidth - 100 // Subtract some margin
+    const maxHeight = window.innerHeight - 100 // Adjust as needed for other elements
+    const aspectRatio = 500 / 380
+
+    let newWidth = maxWidth
+    let newHeight = maxWidth / aspectRatio
+
+    if (newHeight > maxHeight) {
+      newHeight = maxHeight
+      newWidth = maxHeight * aspectRatio
+    }
+
+    setCanvasSize({ width: newWidth, height: newHeight })
+  }
+
+  // UseEffect for initial setting and resize listener
+  useEffect(() => {
+    updateCanvasSize()
+    window.addEventListener('resize', updateCanvasSize)
+    return () => window.removeEventListener('resize', updateCanvasSize)
+  }, [])
+
   function drawArrows(ctx: CanvasRenderingContext2D) {
     const arrowSize = 30 // Size of the arrows
     const padding = 10 // Space from the edge of the canvas
@@ -495,7 +522,7 @@ export default function SnakeGame() {
       drawSnake(ctx)
       drawArrows(ctx) // Add this line
     }
-  }, [snake, apple, isLost])
+  }, [snake, apple, isLost, canvasSize])
 
   return (
     <>
