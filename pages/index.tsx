@@ -382,50 +382,120 @@ export default function SnakeGame() {
     }
   }
 
-  const handleTouch = (e: TouchEvent) => {
-    e.preventDefault() // Optional: Prevents the default action of the touch event
+  const handleInteraction = (clientX: number, clientY: number) => {
     const canvas = canvasRef.current
     if (!canvas) return
 
     const rect = canvas.getBoundingClientRect()
-    const touchX = e.touches[0].clientX - rect.left
-    const touchY = e.touches[0].clientY - rect.top
+    const x = clientX - rect.left
+    const y = clientY - rect.top
     const canvasCenterX = canvasWidth / 2
     const canvasCenterY = canvasHeight / 2
 
-    if (Math.abs(touchX - canvasCenterX) > Math.abs(touchY - canvasCenterY)) {
-      // Horizontal touch
-      if (touchX < canvasCenterX) {
-        // Left touch
+    if (Math.abs(x - canvasCenterX) > Math.abs(y - canvasCenterY)) {
+      // Horizontal interaction
+      if (x < canvasCenterX) {
+        // Left interaction
         setVelocity({ dx: -1, dy: 0 })
       } else {
-        // Right touch
+        // Right interaction
         setVelocity({ dx: 1, dy: 0 })
       }
     } else {
-      // Vertical touch
-      if (touchY < canvasCenterY) {
-        // Up touch
+      // Vertical interaction
+      if (y < canvasCenterY) {
+        // Up interaction
         setVelocity({ dx: 0, dy: -1 })
       } else {
-        // Down touch
+        // Down interaction
         setVelocity({ dx: 0, dy: 1 })
       }
     }
+  }
+  const handleTouch = (e: TouchEvent) => {
+    e.preventDefault()
+    const touchX = e.touches[0].clientX
+    const touchY = e.touches[0].clientY
+    handleInteraction(touchX, touchY)
+  }
+
+  const handleClick = (e: MouseEvent) => {
+    e.preventDefault()
+    handleInteraction(e.clientX, e.clientY)
   }
 
   useEffect(() => {
     const canvas = canvasRef.current
     if (canvas) {
-      canvas.addEventListener('touchstart', handleTouch, { passive: false })
+      canvas.addEventListener('touchstart', handleTouch)
+      canvas.addEventListener('mousedown', handleClick)
     }
 
     return () => {
       if (canvas) {
         canvas.removeEventListener('touchstart', handleTouch)
+        canvas.removeEventListener('mousedown', handleClick)
       }
     }
   }, [])
+
+  function drawArrows(ctx: CanvasRenderingContext2D) {
+    const arrowSize = 30 // Size of the arrows
+    const padding = 10 // Space from the edge of the canvas
+
+    ctx.fillStyle = 'black' // Arrow color
+
+    // Draw Up Arrow
+    ctx.beginPath()
+    ctx.moveTo(canvasWidth / 2, padding)
+    ctx.lineTo(canvasWidth / 2 - arrowSize / 2, padding + arrowSize)
+    ctx.lineTo(canvasWidth / 2 + arrowSize / 2, padding + arrowSize)
+    ctx.fill()
+
+    // Draw Down Arrow
+    ctx.beginPath()
+    ctx.moveTo(canvasWidth / 2, canvasHeight - padding)
+    ctx.lineTo(
+      canvasWidth / 2 - arrowSize / 2,
+      canvasHeight - padding - arrowSize
+    )
+    ctx.lineTo(
+      canvasWidth / 2 + arrowSize / 2,
+      canvasHeight - padding - arrowSize
+    )
+    ctx.fill()
+
+    // Draw Left Arrow
+    ctx.beginPath()
+    ctx.moveTo(padding, canvasHeight / 2)
+    ctx.lineTo(padding + arrowSize, canvasHeight / 2 - arrowSize / 2)
+    ctx.lineTo(padding + arrowSize, canvasHeight / 2 + arrowSize / 2)
+    ctx.fill()
+
+    // Draw Right Arrow
+    ctx.beginPath()
+    ctx.moveTo(canvasWidth - padding, canvasHeight / 2)
+    ctx.lineTo(
+      canvasWidth - padding - arrowSize,
+      canvasHeight / 2 - arrowSize / 2
+    )
+    ctx.lineTo(
+      canvasWidth - padding - arrowSize,
+      canvasHeight / 2 + arrowSize / 2
+    )
+    ctx.fill()
+  }
+  useEffect(() => {
+    const canvas = canvasRef?.current
+    const ctx = canvas?.getContext('2d')
+
+    if (ctx && !isLost) {
+      clearCanvas(ctx)
+      drawApple(ctx)
+      drawSnake(ctx)
+      drawArrows(ctx) // Add this line
+    }
+  }, [snake, apple, isLost])
 
   return (
     <>
