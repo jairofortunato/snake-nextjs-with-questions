@@ -381,6 +381,66 @@ export default function SnakeGame() {
       gameOver()
     }
   }
+
+
+  const handleInteraction = (clientX: number, clientY: number) => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+  
+    const rect = canvas.getBoundingClientRect();
+    const x = clientX - rect.left;
+    const y = clientY - rect.top;
+    const canvasCenterX = canvasWidth / 2;
+    const canvasCenterY = canvasHeight / 2;
+  
+    if (Math.abs(x - canvasCenterX) > Math.abs(y - canvasCenterY)) {
+      // Horizontal interaction
+      if (x < canvasCenterX) {
+        // Left interaction
+        setVelocity({ dx: -1, dy: 0 });
+      } else {
+        // Right interaction
+        setVelocity({ dx: 1, dy: 0 });
+      }
+    } else {
+      // Vertical interaction
+      if (y < canvasCenterY) {
+        // Up interaction
+        setVelocity({ dx: 0, dy: -1 });
+      } else {
+        // Down interaction
+        setVelocity({ dx: 0, dy: 1 });
+      }
+    }
+  };
+  const handleTouch = (e: TouchEvent) => {
+    e.preventDefault();
+    const touchX = e.touches[0].clientX;
+    const touchY = e.touches[0].clientY;
+    handleInteraction(touchX, touchY);
+  };
+  
+  const handleClick = (e: MouseEvent) => {
+    e.preventDefault();
+    handleInteraction(e.clientX, e.clientY);
+  };
+  
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (canvas) {
+      canvas.addEventListener('touchstart', handleTouch);
+      canvas.addEventListener('mousedown', handleClick);
+    }
+  
+    return () => {
+      if (canvas) {
+        canvas.removeEventListener('touchstart', handleTouch);
+        canvas.removeEventListener('mousedown', handleClick);
+      }
+    };
+  }, []);
+    
+
   return (
     <>
       <Head />
