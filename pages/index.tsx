@@ -351,23 +351,90 @@ export default function SnakeGame() {
   const [question, setQuestion] = useState('')
   const [answer, setAnswer] = useState('')
   const [options, setOptions] = useState<string[]>([])
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
 
   const generateQuestion = () => {
     const questionsAndAnswers = [
       {
-        question: 'What is 2 + 2?',
-        options: ['4', '5', '6', '7'],
-        correctAnswer: '4',
+        question: 'O que é o "Estado", segundo a antropologia política?',
+        options: [
+          'Um grupo de indivíduos com interesses comuns',
+          'Uma entidade que possui o monopólio do uso legítimo da força',
+          'Uma instituição que regula as relações econômicas',
+          'Uma organização baseada em laços familiares',
+        ],
+        correctAnswer:
+          'Uma entidade que possui o monopólio do uso legítimo da força',
+      },
+      {
+        question:
+          'Como a antropologia política analisa as sociedades sem Estados?',
+        options: [
+          'Focando apenas em suas estruturas religiosas',
+          'Ignorando-as, pois não são relevantes',
+          'Observando suas formas de liderança e organização social',
+          'Estudando exclusivamente suas práticas econômicas',
+        ],
+        correctAnswer:
+          'Observando suas formas de liderança e organização social',
+      },
+      {
+        question:
+          'Qual conceito é central para entender as relações de poder em diferentes sociedades, segundo a antropologia política?',
+        options: ['Globalização', 'Hierarquia', 'Tecnologia', 'Migração'],
+        correctAnswer: 'Hierarquia',
+      },
+      {
+        question: 'Em antropologia política, "rituais" são importantes porque?',
+        options: [
+          'Eles são apenas celebrações culturais sem significado político',
+          'Eles representam uma forma de arte antiga',
+          'Eles ajudam a manter a ordem social e podem reforçar ou desafiar o poder',
+          'Eles são irrelevantes para o estudo do poder e da política',
+        ],
+        correctAnswer:
+          'Eles ajudam a manter a ordem social e podem reforçar ou desafiar o poder',
+      },
+      {
+        question:
+          'Qual é o principal objeto de estudo da antropologia política?',
+        options: [
+          'Culturas antigas',
+          'Organizações políticas',
+          'Relações de poder',
+          'Evolução biológica',
+        ],
+        correctAnswer: 'Relações de poder',
+      },
+      {
+        question:
+          'Qual teórico é frequentemente associado ao conceito de "biopoder" na antropologia política, e qual é a essência desse conceito?',
+        options: [
+          'Claude Lévi-Strauss; foco nas estruturas subjacentes do pensamento humano',
+          'Max Weber; a análise da autoridade carismática, tradicional e legal-racional',
+          'Michel Foucault; a forma como o poder moderno regula a vida e os corpos das pessoas',
+          'Karl Marx; a análise das relações de classe e da luta de classes',
+        ],
+        correctAnswer:
+          'Michel Foucault; a forma como o poder moderno regula a vida e os corpos das pessoas',
       },
       // Add more questions, options, and correct answers as needed
     ]
 
-    const randomIndex = Math.floor(Math.random() * questionsAndAnswers.length)
-    const selectedQuestion = questionsAndAnswers[randomIndex]
+    const selectedQuestion = questionsAndAnswers[currentQuestionIndex]
     setQuestion(selectedQuestion.question)
     setOptions(selectedQuestion.options)
-    setAnswer(selectedQuestion.correctAnswer) // Set the correct answer
+    setAnswer(selectedQuestion.correctAnswer) // Define a resposta correta
     setShowQuestion(true)
+
+    // Atualiza o índice da pergunta atual para a próxima vez
+    setCurrentQuestionIndex((prevIndex) => {
+      if (prevIndex === questionsAndAnswers.length - 1) {
+        return 0 // Reinicia o índice se alcançar o final da lista
+      } else {
+        return prevIndex + 1 // Incrementa o índice
+      }
+    })
   }
 
   const checkAnswer = (selectedOption: string) => {
@@ -444,8 +511,8 @@ export default function SnakeGame() {
 
   // Function to update canvas size
   const updateCanvasSize = () => {
-    const maxWidth = window.innerWidth - 100 // Subtract some margin
-    const maxHeight = window.innerHeight - 100 // Adjust as needed for other elements
+    const maxWidth = window.innerWidth - 20 // Adjust margin as needed
+    const maxHeight = window.innerHeight - 100 // Adjust for other UI elements
     const aspectRatio = 500 / 380
 
     let newWidth = maxWidth
@@ -454,6 +521,12 @@ export default function SnakeGame() {
     if (newHeight > maxHeight) {
       newHeight = maxHeight
       newWidth = maxHeight * aspectRatio
+    }
+
+    // Ensure the canvas does not exceed the screen width
+    if (newWidth > window.innerWidth) {
+      newWidth = window.innerWidth
+      newHeight = newWidth / aspectRatio
     }
 
     setCanvasSize({ width: newWidth, height: newHeight })
@@ -467,7 +540,7 @@ export default function SnakeGame() {
   }, [])
 
   function drawArrows(ctx: CanvasRenderingContext2D) {
-    const arrowSize = 30 // Size of the arrows
+    const arrowSize = 15 // Size of the arrows
     const padding = 10 // Space from the edge of the canvas
 
     ctx.fillStyle = 'black' // Arrow color
@@ -550,11 +623,11 @@ export default function SnakeGame() {
           <div className="score">
             <p>
               <FontAwesomeIcon icon={['fas', 'star']} />
-              Score: {score}
+              Pontuação: {score}
             </p>
             <p>
               <FontAwesomeIcon icon={['fas', 'trophy']} />
-              Highscore: {highscore > score ? highscore : score}
+              Recorde: {highscore > score ? highscore : score}
             </p>
           </div>
           {!isLost && countDown > 0 ? (
@@ -563,7 +636,7 @@ export default function SnakeGame() {
             </button>
           ) : (
             <div className="controls">
-              <p>How to Play?</p>
+              <p>Como Jogar?</p>
               <p>
                 <FontAwesomeIcon icon={['fas', 'arrow-up']} />
                 <FontAwesomeIcon icon={['fas', 'arrow-right']} />
@@ -587,11 +660,11 @@ export default function SnakeGame() {
           </div>
         )}
       </main>
-      <footer>
-        Copyright &copy; <a href="https://mueller.dev">Marc Müller</a> 2022
-        &nbsp;|&nbsp;{' '}
-        <a href="https://github.com/marcmll/next-snake">
-          <FontAwesomeIcon icon={['fab', 'github']} /> Github
+      <footer className="question">
+        Esag Udesc Prof. Daniel Pinheiro &nbsp;|&nbsp;{' '}
+        <a href="https://github.com/jairofortunato/snake-nextjs-with-questions">
+          <FontAwesomeIcon icon={['fab', 'github']} /> Trabalho de Antropologia
+          da Política
         </a>
       </footer>
     </>
