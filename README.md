@@ -1,26 +1,21 @@
-![](public/github-header.jpg)
+![]![](public/github-header.jpg)
 
-## What is Next-Snake?
+## What is Snake-NextJS-with-Questions?
 
-Next-Snake is a minimalistic Snake browser game, built using Next.js and React.\
-I challenge you to beat a score of 30! [Give it a shot!](https://next-snake.vercel.app/)
+Snake-NextJS-with-Questions is an innovative twist on the classic Snake browser game, built using Next.js and React, and integrating key concepts from the field of political anthropology. 
+Challenge yourself not just to score high in the game, but also to answer questions that test your knowledge! [Give it a shot!](https://snake-nextjs-with-questions-jairofortunato.vercel.app/)
 
-## Why Next.js and React?
+## Why Next.js, React, and Political Anthropology?
 
-Instead of having vanilla JavaScript intervals running the game, React offers the `useState` and `useEffect` hooks for updating the canvas. Additionally, React hooks enable the custom [`setInterval` declarative](https://github.com/donavon/use-interval) as described by [Dan Abramaov](https://github.com/gaearon) on his [personal blog](https://overreacted.io/making-setinterval-declarative-with-react-hooks/).
-
-The `setInterval` declarative makes it possible to pause the interval and dynamically change the speed at which the interval runs. This makes it easy to implement game mechanics such as the snake speeding up as the player collects points.
+This project goes beyond a typical browser game by incorporating educational elements. Using React's `useState` and `useEffect` hooks, the game dynamically presents questions on political anthropology, turning a simple snake game into an interactive learning experience enabling pausing the game for question intervals. This integration challenges players to not only navigate the snake but also to engage with thought-provoking questions, enhancing their understanding of political anthropology.
 
 ![](public/demo.gif)
 
-This project was a great opportunity to gain a deeper understanding of how React hooks work, and how data is read and updated within a React frontend. Next.js made it easy for the project to get legs, as there was no time spent worrying about routing and SCSS support. Additionally, hosting the project on Vercel made Next.js the obvious option when developing with React.
+This project was not only an exploration into the capabilities of React hooks and Next.js, but also a unique approach to blending gameplay with educational content. The use of Next.js facilitated rapid development, and hosting on Vercel was a seamless choice for a React-based project.
 
 ## Contributing
 
-If you happen to find any bugs; have ideas on improving core gameplay; or you want to contribute directly, feel free to open an issue or pull request!
+If you find any bugs, have suggestions to improve the integration of educational content, or want to contribute to the core gameplay experience, feel free to open an issue or pull request!
 
-# snake-nextjs-with-questions
+# Snake-NextJS-with-Questions
 
-# snake-nextjs-with-questions
-
-# snake-nextjs-with-questions
